@@ -6,15 +6,11 @@ import * as admin from "firebase-admin";
 
 var serviceAccount = require("@/config/serviceAccountKey.json");
 
-// Initialize Firebase Admin (only once)
-if (!admin.apps.length) {
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-  });
-}
 
-export const db = admin.firestore();
-export default admin;
+
+
+// export const db = admin.firestore();
+// export default admin;
 
 export const authOptions = {
   providers: [
@@ -29,4 +25,5 @@ export const authOptions = {
 };
 
 const handler = NextAuth(authOptions);
-export { handler as GET, handler as POST };
+export const GET = handler;
+export const POST = handler;
