@@ -12,18 +12,20 @@ export default function FriendList(){
             return;
 
         async function fetchFriends(){
-            const res = await fetch('/api/friends/get');
+            const res = await fetch('/api/friends/list');
             const data = await res.json();
-            setFriends(data.friends);
+            console.log("debug: ", data);
+            setFriends(data.friends? data.friends : []);
         }
 
+        setFriends([]);
         fetchFriends();
     }, [session]);
 
     return (
     <div className="p-4">
         <h2 className="text-xl font-bold">Friends</h2>
-        {friends.length > 0 ? (
+        {Array.isArray(friends) && friends.length > 0 ? (
         <ul>
             {friends.map((friend) => (
             <li key={friend.id} className="p-2 border-b">

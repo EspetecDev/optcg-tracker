@@ -21,7 +21,10 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <SessionProvider>{children}</SessionProvider> 
+        <SessionProvider>
+          <header><button><a href="/authtest"></a>GO</button></header>
+          {children}
+        </SessionProvider> 
       </body>
     </html>
   );

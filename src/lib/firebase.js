@@ -1,6 +1,10 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
+import admin from "firebase-admin";
 import { getFirestore } from "firebase/firestore";
+
+
+var serviceAccount = require("@/config/serviceAccountKey.json");
 
 // Initialize Firebase Admin (only once)
 if (!admin.apps.length) {
