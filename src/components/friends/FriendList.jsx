@@ -14,12 +14,12 @@ export default function FriendList(){
         async function fetchFriends(){
             const res = await fetch('/api/friends/list');
             const data = await res.json();
-            console.log("debug: ", data);
+            console.log("debug data: ", data);
             setFriends(data.friends? data.friends : []);
         }
 
-        setFriends([]);
         fetchFriends();
+        // console.log("debug friends: ", friends);
     }, [session]);
 
     return (

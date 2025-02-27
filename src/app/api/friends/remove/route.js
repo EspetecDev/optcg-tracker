@@ -1,5 +1,7 @@
-
-
+import { getServerSession } from "next-auth";
+import { authOptions } from "../../auth/[...nextauth]/route";
+import { db } from "@/lib/firebase";
+import admin from "firebase-admin";
 
 export async function POST(req){
 

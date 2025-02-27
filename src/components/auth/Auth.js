@@ -9,7 +9,7 @@ export default function Auth() {
     <div className="flex flex-col items-center space-y-4">
       {session ? (
         <>
-          <p>Welcome, {session.user?.name}!</p>
+          <p>Welcome, {session.user?.name}! {session.user?.id}</p>
           <button className="px-4 py-2 bg-red-500 text-white rounded" onClick={() => signOut()}>
             Sign Out
           </button>

@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Avatar, AvatarImage, AvatarFallback } from "../ui/avatar";
+import Router from "next/router";
 
 export default function FriendsManager() {
   const { data: session } = useSession();
@@ -19,14 +21,21 @@ export default function FriendsManager() {
 
     async function fetchData() {
       const res = await fetch("/api/friends/list");
+      const allfrriendsRes = await fetch("/api/users/");
+      const requestRes = await fetch("/api/friends/request");
       const data = await res.json();
-      setUsers(data.users);
-      setFilteredUsers(data.users);
+      const allData = await allfrriendsRes.json();
+      const requestData = await requestRes.json();
+      
+      setUsers(allData.data.filter((user) => user.id !== session.user.id || data.friends.has(user.id)));
+      setFilteredUsers(users);
       setFriends(data.friends);
-      setRequests(data.requests);
+      setRequests(requestData.requests);
     }
 
     fetchData();
+    console.log("debug requests: ", requests);
+    console.log("debug friend2s: ", friends);
   }, [session]);
 
   // 🔎 Handle search input
@@ -43,25 +52,31 @@ export default function FriendsManager() {
     }
   }
 
-  async function sendFriendRequest(recipientId) {
+  async function sendFriendRequest(targetID) {
     await fetch("/api/friends/request", {
       method: "POST",
-      body: JSON.stringify({ recipientId }),
+      body: JSON.stringify({ targetID }),
     });
+
+    
   }
 
-  async function acceptFriendRequest(requesterId) {
+  async function acceptFriendRequest(requesterID) {
     await fetch("/api/friends/accept", {
       method: "POST",
-      body: JSON.stringify({ requesterId }),
+      body: JSON.stringify({ requesterID }),
     });
+
+    // Router.reload();
   }
 
-  async function removeFriend(friendId) {
+  async function removeFriend(toDeleteID) {
     await fetch("/api/friends/remove", {
       method: "POST",
-      body: JSON.stringify({ friendId }),
+      body: JSON.stringify({ toDeleteID }),
     });
+    
+    // Router.reload();
   }
 
   return (
@@ -71,11 +86,15 @@ export default function FriendsManager() {
       <Card className="mb-4">
         <CardContent>
           <h3 className="text-lg font-semibold mb-2">Your Friends</h3>
-          {friends.length > 0 ? (
+          {Array.isArray(friends) && friends.length > 0 ? (
             friends.map((friend) => (
               <div key={friend.id} className="flex justify-between p-2 border-b">
+                <Avatar>
+                  <AvatarImage src={friend.image} />
+                  <AvatarFallback>CN</AvatarFallback>
+                </Avatar>
                 <span>{friend.name}</span>
-                <Button variant="destructive" onClick={() => removeFriend(friend.id)}>
+                <Button variant="destructive" onClick={() => removeFriend(friend.id).then(() => window.location.reload())}>
                   Remove
                 </Button>
               </div>
@@ -92,8 +111,12 @@ export default function FriendsManager() {
           {requests.length > 0 ? (
             requests.map((request) => (
               <div key={request.id} className="flex justify-between p-2 border-b">
+                <Avatar>
+                  <AvatarImage src={request.image} />
+                  <AvatarFallback>CN</AvatarFallback>
+                </Avatar>
                 <span>{request.name}</span>
-                <Button variant="success" onClick={() => acceptFriendRequest(request.id)}>
+                <Button variant="success" onClick={() => acceptFriendRequest(request.id).then(() => window.location.reload())}>
                   Accept
                 </Button>
               </div>
@@ -114,11 +137,11 @@ export default function FriendsManager() {
             onChange={handleSearch}
             className="mb-3"
           />
-          {filteredUsers.length > 0 ? (
+          { filteredUsers.length > 0 ? (
             filteredUsers.map((user) => (
               <div key={user.id} className="flex justify-between p-2 border-b">
                 <span>{user.name}</span>
-                <Button variant="default" onClick={() => sendFriendRequest(user.id)}>
+                <Button variant="default" onClick={() => sendFriendRequest(user.id).then(() => window.location.reload())}>
                   Add Friend
                 </Button>
               </div>

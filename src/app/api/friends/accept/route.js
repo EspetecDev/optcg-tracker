@@ -1,9 +1,7 @@
-import { SessionContext } from "next-auth/react";
 import { authOptions } from "../../auth/[...nextauth]/route";
 import { getServerSession } from "next-auth";
-import { db, admin } from "@/lib/firebase";
-
-
+import { db } from "@/lib/firebase";
+import admin from "firebase-admin";
 
 export async function POST(req){
 
@@ -24,7 +22,7 @@ export async function POST(req){
 
     await userRef.update({
         friends: admin.firestore.FieldValue.arrayUnion(requesterID),
-        friendRequests: admin.firestore.FieldValue.arrayRemove(requesterID),
+        requests: admin.firestore.FieldValue.arrayRemove(requesterID),
     });
 
     await requesterRef.update({

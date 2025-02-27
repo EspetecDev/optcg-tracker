@@ -1,9 +1,6 @@
-import { SessionContext } from "next-auth/react";
 import { authOptions } from "../../auth/[...nextauth]/route";
 import { getServerSession } from "next-auth";
-import { db, admin } from "@/lib/firebase";
-
-
+import { db } from "@/lib/firebase";
 
 export async function GET(req){
 
@@ -13,8 +10,20 @@ export async function GET(req){
 
     const userID = session.user.id;
     const userRef = db.collection("users").doc(userID);
-    const friends = userRef.friends ? userRef.friends : [];
-    // console.log(friends);
+    const userDoc = await userRef.get();
+    const friendsIDs = userDoc.data().friends ? userDoc.data().friends : [];
+    var friends = [];
+    if (Array.isArray(friendsIDs) && friendsIDs.length > 0)
+    {
+        for (const friendID of friendsIDs)
+        {
+            const friendRef = db.collection("users").doc(friendID);
+            const friendDoc = await friendRef.get();
+            if (!friendDoc.exists)
+                return Response.json({ error: "User: " + friendID + " not found" }, { status: 400 });
+            friends.push({ id: friendID, name: friendDoc.data().name, image: friendDoc.data().image });
+        }
+    }
 
-    return Response.json({ message: "Get user "+userID+" friends: "+friends, success: true, data: friends }, {status: 200});
+    return Response.json({ message: "Get user "+userID+" friends: "+friends, success: true, friends: friends }, {status: 200});
 }
