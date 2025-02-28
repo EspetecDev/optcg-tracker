@@ -1,6 +1,6 @@
 import { authOptions } from "../../auth/[...nextauth]/route";
 import { getServerSession } from "next-auth";
-import { db } from "@/lib/firebase";
+import { dbAdmin } from "@/lib/firebaseAdmin";
 import admin from "firebase-admin";
 
 export async function POST(req){
@@ -14,8 +14,8 @@ export async function POST(req){
         return Response.json({ error: "Missing receiverID" }, { status: 400 });
 
     const userID = session.user.id;
-    const userRef = db.collection("users").doc(userID);
-    const requesterRef = db.collection("users").doc(requesterID);
+    const userRef = dbAdmin.collection("users").doc(userID);
+    const requesterRef = dbAdmin.collection("users").doc(requesterID);
     const requesterDoc = await requesterRef.get();
     if (!requesterDoc.exists)
         return Response.json({ error: "User: "+requesterID+" not found" }, { status: 400 });

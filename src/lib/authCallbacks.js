@@ -1,10 +1,10 @@
-import { db } from "./firebase";
+import { dbAdmin } from "./firebaseAdmin";
 
 
 // If user does not exist, initialize the fields
 export async function signIn({ user }) {
 
-  const userRef = db.collection("users").doc(user.id);
+  const userRef = dbAdmin.collection("users").doc(user.id);
   const doc = await userRef.get();
   const data = doc.data();
   const friendsFieldExists = "friends" in data;

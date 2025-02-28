@@ -1,17 +1,7 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import admin from "firebase-admin";
 import { getFirestore } from "firebase/firestore";
 
-
-var serviceAccount = require("@/config/serviceAccountKey.json");
-
-// Initialize Firebase Admin (only once)
-if (!admin.apps.length) {
-    admin.initializeApp({
-      credential: admin.credential.cert(serviceAccount),
-    });
-}
 
 const firebaseConfig = {
     apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -25,5 +15,5 @@ const firebaseConfig = {
 
 const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 export const auth = getAuth(app);
-export const db = admin.firestore();
+export const db = getFirestore(app);
 export default app;

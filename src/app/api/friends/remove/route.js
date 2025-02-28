@@ -1,6 +1,6 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]/route";
-import { db } from "@/lib/firebase";
+import { dbAdmin } from "@/lib/firebaseAdmin";
 import admin from "firebase-admin";
 
 export async function POST(req){
@@ -14,8 +14,8 @@ export async function POST(req){
         return Response.json({ error: "Missing toDeleteID" }, { status: 400 });
 
     const userID = session.user.id;
-    const userRef = db.collection("users").doc(userID);
-    const toDeleteRef = db.collection("users").doc(toDeleteID);
+    const userRef = dbAdmin.collection("users").doc(userID);
+    const toDeleteRef = dbAdmin.collection("users").doc(toDeleteID);
     const toDeleteDoc = await toDeleteRef.get();
     if (!toDeleteDoc.exists)
         return Response.json({ error: "User: "+toDeleteID+" not found" }, { status: 400 });

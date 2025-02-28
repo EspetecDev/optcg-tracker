@@ -1,6 +1,6 @@
 import { authOptions } from "../auth/[...nextauth]/route";
 import { getServerSession } from "next-auth";
-import { db } from "@/lib/firebase";
+import { dbAdmin } from "@/lib/firebaseAdmin";
 
 export async function GET(req){
 
@@ -8,7 +8,7 @@ export async function GET(req){
     if (!session)
         return Response.json({ error: "Unauthorized" }, { status: 401 });
     
-    const usersRef = db.collection("users");
+    const usersRef = dbAdmin.collection("users");
     const usersCollection = await usersRef.get();
     var users = [];
     usersCollection.forEach( u => {

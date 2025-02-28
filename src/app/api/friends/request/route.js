@@ -1,6 +1,6 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]/route";
-import { db } from "@/lib/firebase";
+import { dbAdmin } from "@/lib/firebaseAdmin";
 import admin from "firebase-admin";
 
 export async function POST(req) {
@@ -13,7 +13,7 @@ export async function POST(req) {
     return Response.json({ error: "Missing receiverID" }, { status: 400 });
 
   const senderID = session.user.id;
-  const recipientRef = db.collection("users").doc(targetID);
+  const recipientRef = dbAdmin.collection("users").doc(targetID);
   await recipientRef.update({
     requests: admin.firestore.FieldValue.arrayUnion(senderID),
   });
@@ -31,7 +31,7 @@ export async function GET(req) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
 
   const userID = session.user.id;
-  const userRef = db.collection("users").doc(userID);
+  const userRef = dbAdmin.collection("users").doc(userID);
   const userDoc = await userRef.get();
   const requestIDs = userDoc.data().requests ? userDoc.data().requests : [];
   var requests = [];
@@ -39,7 +39,7 @@ export async function GET(req) {
   {
     for (const reqId of requestIDs)
     {
-      const userReqRef = db.collection("users").doc(reqId);
+      const userReqRef = dbAdmin.collection("users").doc(reqId);
       const userReqDoc = await userReqRef.get();
       if (!userReqDoc.exists)
         return Response.json({ error: "User: " + reqId + " not found" }, { status: 400 });

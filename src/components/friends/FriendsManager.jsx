@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarImage, AvatarFallback } from "../ui/avatar";
-import Router from "next/router";
+import { onSnapshot, doc } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 
 export default function FriendsManager() {
   const { data: session } = useSession();
@@ -33,9 +34,21 @@ export default function FriendsManager() {
       setRequests(requestData.requests);
     }
 
+    const userRef = doc(db, "users", session.user.id); 
+    const unsuscribe = onSnapshot(userRef, (docSnap) => {
+      if (docSnap.exists()) {
+          const data = docSnap.data();
+          setFriends(Array.isArray(data.friends) ? data.friends : []);
+          console.log(friends)
+      }
+    });
+
     fetchData();
     console.log("debug requests: ", requests);
     console.log("debug friend2s: ", friends);
+
+    return () => unsuscribe();
+
   }, [session]);
 
   // 🔎 Handle search input

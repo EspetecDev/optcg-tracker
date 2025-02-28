@@ -1,6 +1,5 @@
 import Auth from "@/components/auth/Auth";
 import FriendsManager from "@/components/friends/FriendsManager";
-import { Button } from "@/components/ui/button";
 
 export default function AuthTest() {
   return (
