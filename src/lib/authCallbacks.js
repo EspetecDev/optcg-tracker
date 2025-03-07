@@ -16,11 +16,10 @@ export async function signIn({ user }) {
       email: user.email,
       image: user.image,
       friends: [],
-      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      createdAt: dbAdmin.firestore.FieldValue.serverTimestamp(),
     });
   }
   else if (!friendsFieldExists) {
-    
     await userRef.update({
       friends: [],
     });

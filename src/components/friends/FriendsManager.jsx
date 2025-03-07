@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarImage, AvatarFallback } from "../ui/avatar";
+import { toast } from "sonner";
 import { onSnapshot, doc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 
@@ -39,13 +40,17 @@ export default function FriendsManager() {
       if (docSnap.exists()) {
           const data = docSnap.data();
           setFriends(Array.isArray(data.friends) ? data.friends : []);
-          console.log(friends)
+          const newRequests = data.requests || [];
+
+          if (newRequests.length > requests.length) {
+            toast("You have a new friend request.");
+          }
+
+          setRequests(newRequests);
       }
     });
 
     fetchData();
-    console.log("debug requests: ", requests);
-    console.log("debug friend2s: ", friends);
 
     return () => unsuscribe();
 
@@ -60,7 +65,7 @@ export default function FriendsManager() {
       setFilteredUsers(users);
     } else {
       setFilteredUsers(
-        users.filter((user) => user.email.toLowerCase().includes(query))
+        users.filter((user) => user.email.toLowerCase().includes(query) && !friends.includes(user.id))
       );
     }
   }
@@ -99,12 +104,12 @@ export default function FriendsManager() {
       <Card className="mb-4">
         <CardContent>
           <h3 className="text-lg font-semibold mb-2">Your Friends</h3>
-          {Array.isArray(friends) && friends.length > 0 ? (
-            friends.map((friend) => (
-              <div key={friend.id} className="flex justify-between p-2 border-b">
+          {friends.length > 0 ? (
+            friends.map((friend, idx) => (
+              <div key={friend.id || idx} className="flex justify-between p-2 border-b">
                 <Avatar>
                   <AvatarImage src={friend.image} />
-                  <AvatarFallback>CN</AvatarFallback>
+                  <AvatarFallback></AvatarFallback>
                 </Avatar>
                 <span>{friend.name}</span>
                 <Button variant="destructive" onClick={() => removeFriend(friend.id).then(() => window.location.reload())}>
@@ -122,8 +127,8 @@ export default function FriendsManager() {
         <CardContent>
           <h3 className="text-lg font-semibold mb-2">Pending Friend Requests</h3>
           {requests.length > 0 ? (
-            requests.map((request) => (
-              <div key={request.id} className="flex justify-between p-2 border-b">
+            requests.map((request, idx) => (
+              <div key={request.id || idx} className="flex justify-between p-2 border-b">
                 <Avatar>
                   <AvatarImage src={request.image} />
                   <AvatarFallback>CN</AvatarFallback>
