@@ -40,6 +40,51 @@
         "uriFormat": "%s",
         "webRoot": "${workspaceFolder}"
       }
+    },
+    {
+      "name": "Debug Card Updater",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/src/tools/card-updater/card_updater.py",
+      "args": [
+          "${input:jsonFilePath}"
+      ],
+      "console": "integratedTerminal",
+      "justMyCode": true,
+      "cwd": "${workspaceFolder}"
+    },
+    {
+        "name": "Debug Card Updater (Multiple Files)",
+        "type": "debugpy",
+        "request": "launch",
+        "program": "${workspaceFolder}/src/tools/card-updater/card_updater.py",
+        "args": [
+            "${input:jsonFilePath1}",
+            "${input:jsonFilePath2}"
+        ],
+        "console": "integratedTerminal",
+        "justMyCode": true,
+        "cwd": "${workspaceFolder}"
+    }
+  ],
+  "inputs": [
+    {
+      "id": "jsonFilePath",
+      "type": "promptString",
+      "description": "Enter the path to the JSON file",
+      "default": "d:\\Dev\\optcg-tracker\\data\\cards.json"
+    },
+    {
+      "id": "jsonFilePath1",
+      "type": "promptString",
+      "description": "Enter the path to the first JSON file",
+      "default": "d:\\Dev\\optcg-tracker\\data\\cards1.json"
+    },
+    {
+      "id": "jsonFilePath2",
+      "type": "promptString",
+      "description": "Enter the path to the second JSON file",
+      "default": "d:\\Dev\\optcg-tracker\\data\\cards2.json"
     }
   ]
 }
